@@ -70,9 +70,6 @@ public class UploadAct extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "FINISH WITH THE SHARING!!!!", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-
                 Intent sendMailIntent = new Intent(Intent.ACTION_SEND);
                 sendMailIntent.putExtra(Intent.EXTRA_SUBJECT, "URL fo file on RGhost.ru");
                 sendMailIntent.putExtra(Intent.EXTRA_TEXT, resultURL);
@@ -89,8 +86,6 @@ public class UploadAct extends AppCompatActivity {
                 // send message to webview - click choose button by javascript
                 setModeAndUpdateDisplay(MODE_START_CHOOSE);
                 webView.loadUrl("javascript:{ var b=document.getElementById('choose'); b.click(); }");
-                //webView.loadUrl("javascript:window.GetResultUrlHandler.showHTML" +
-                 //       "('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
 
             }
         });
@@ -162,38 +157,32 @@ public class UploadAct extends AppCompatActivity {
 
         webView.setWebChromeClient(new WebChromeClient() {
 
+
+            private void innerCallChooser() {
+                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setType("file/*");
+                UploadAct.this.startActivityForResult(Intent.createChooser(i, "File Chooser"), INPUT_FILE_REQUEST_CODE);
+            }
             //The undocumented magic method override
             //Eclipse will swear at you if you try to put @Override here
             // For Android 3.0+
             public void openFileChooser(ValueCallback<Uri> uploadMsg) {
 
                 mUploadMessage = uploadMsg;
-                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                i.addCategory(Intent.CATEGORY_OPENABLE);
-                i.setType("file/*");
-                UploadAct.this.startActivityForResult(Intent.createChooser(i, "File Chooser"), INPUT_FILE_REQUEST_CODE);
-
+                innerCallChooser();
             }
 
             // For Android 3.0+
             public void openFileChooser( ValueCallback uploadMsg, String acceptType ) {
                 mUploadMessage = uploadMsg;
-                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                i.addCategory(Intent.CATEGORY_OPENABLE);
-                i.setType("file/*");
-                UploadAct.this.startActivityForResult(
-                        Intent.createChooser(i, "File Browser"),
-                        INPUT_FILE_REQUEST_CODE);
+                innerCallChooser();
             }
 
             //For Android 4.1
             public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture){
                 mUploadMessage = uploadMsg;
-                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                i.addCategory(Intent.CATEGORY_OPENABLE);
-                i.setType("file/*");
-                UploadAct.this.startActivityForResult(Intent.createChooser(i, "File Chooser"), INPUT_FILE_REQUEST_CODE );
-
+                innerCallChooser();
             }
 
             @Override
@@ -205,20 +194,7 @@ public class UploadAct extends AppCompatActivity {
                 }
                 mFilePathCallback = filePathCallback;
 
-                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                i.addCategory(Intent.CATEGORY_OPENABLE);
-                i.setType("file/*");
-                UploadAct.this.startActivityForResult(Intent.createChooser(i, "File Chooser"), INPUT_FILE_REQUEST_CODE );
-/*
-                Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                contentSelectionIntent.setType("file/*");
-
-                Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
-                chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
-                chooserIntent.putExtra(Intent.EXTRA_TITLE, "File Chooser");
-
-                startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);*/
+                innerCallChooser();
 
                 return true;
             }
