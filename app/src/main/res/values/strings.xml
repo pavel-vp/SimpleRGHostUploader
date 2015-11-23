@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SimpleRGHostUploader</string>
+    <string name="action_settings">Clear form for new upload</string>
+</resources>
